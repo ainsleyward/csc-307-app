@@ -91,24 +91,29 @@ app.get("/users", (req, res) => {
       }
   });
 
+  function generateId() {
+    return Math.random().toString(36).substr(2, 6);
+  }  
+
   app.post("/users", (req, res) => {
     const userToAdd = req.body;
+    userToAdd.id = generateId();  
     addUser(userToAdd);
-    res.send();
-  });
+    res.status(201).send(userToAdd);  
+  });  
 
   app.delete("/users/:id", (req, res) => {
     const id = req.params["id"];
     const index = users["users_list"].findIndex(user => user.id === id);
-
+  
     if (index !== -1) {
-        users["users_list"].splice(index, 1);
-        res.status(204).send({message: 'User with id ${id} deleted.'});
+      users["users_list"].splice(index, 1);
+      res.status(204).send();  // No content
     } else {
-        res.status(404).send({message: "User not found."});
-    };
+      res.status(404).send({ message: "User not found." });
+    }
   });
-
+  
 app.listen(port, () => {
   console.log(
     `Example app listening at http://localhost:${port}`
